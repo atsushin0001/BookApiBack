@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BookApiBack.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using Npgsql;
+using BookApiBack.Services;
 
 namespace BookApiBack
 {
@@ -16,11 +19,32 @@ namespace BookApiBack
         }
 
         public IConfiguration Configuration { get; }
+        
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                      builder.WithOrigins("http://localhost:3000",
+                                                          "https://localhost:44368");
+                                  });
+            });
+            
             services.AddControllers();
+
+            services.AddScoped<IDbConnection>(
+                provider => new NpgsqlConnection(
+                    Configuration.GetConnectionString("DefaultConnection")
+                )
+            );
+            services.AddScoped<IBookService, BookService>();
 
             services.AddDbContext<BookApiContext>(options =>
             {
@@ -48,6 +72,8 @@ namespace BookApiBack
 
             app.UseRouting();
 
+            app.UseCors(MyAllowSpecificOrigins);
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

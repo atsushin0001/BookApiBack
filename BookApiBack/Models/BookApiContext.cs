@@ -4,11 +4,10 @@ namespace BookApiBack.Models
 {
     public class BookApiContext : DbContext
     {
-        public BookApiContext(DbContextOptions<BookApiContext> options)
-            : base(options)
+        public BookApiContext(DbContextOptions<BookApiContext> options) : base(options)
         {
         }
 
-        public DbSet<BookItem> BookItems { get; set; }
+        public DbSet<BookItem> bookitems { get; set; }
     }
 }
