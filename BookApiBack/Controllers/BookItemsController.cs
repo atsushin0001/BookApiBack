@@ -32,7 +32,6 @@ namespace BookApiBack.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookItem>>> GetBookItemALL([FromQuery] string title)
         {
-
             if (title == null) 
             {
                 _logger.LogInformation("Get all books!!!");
