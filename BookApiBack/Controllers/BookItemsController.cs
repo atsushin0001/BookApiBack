@@ -32,10 +32,11 @@ namespace BookApiBack.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookItem>>> GetBookItemALL([FromQuery] string title)
         {
-            _logger.LogInformation("Get using title!!!");
 
             if (title == null) 
             {
+                _logger.LogInformation("Get all books!!!");
+
                 var bookItems = await _service.GetAllBooksAsync();
                 if (bookItems == null)
                 {
@@ -48,6 +49,8 @@ namespace BookApiBack.Controllers
             }
             else 
             {
+                _logger.LogInformation("Get using title!!!");
+
                 var bookItems = await _service.GetBooksByTitleAsync(title);
                 if (bookItems == null)
                 {
@@ -72,14 +75,21 @@ namespace BookApiBack.Controllers
         {
             _logger.LogInformation("Get using id!!!");
 
-            var bookItem = await _context.bookitems.FindAsync(id);
-
+            var bookItem = await _service.GetBookByIdAsync(id);
             if (bookItem == null)
             {
                 return NotFound();
             }
+            return Ok(bookItem);
 
-            return bookItem;
+            //var bookItem = await _context.bookitems.FindAsync(id);
+
+            //if (bookItem == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return bookItem;
         }
 
         // GET: api/BookItems/publisheddate_start/publisheddate_end
@@ -105,24 +115,27 @@ namespace BookApiBack.Controllers
         // PUT: api/BookItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookItem(long id, BookItem bookItem)
+        public async Task<IActionResult> PutBookItem(long id, BookItem putBookItem)
         {
             _logger.LogInformation("Put!!!");
 
-            if (id != bookItem.id)
+            if (id != putBookItem.id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(bookItem).State = EntityState.Modified;
+            //_context.Entry(bookItem).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                BookItem bookItem = await _service.PutBookAsync(id, putBookItem);
+
+                //await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookItemExists(id))
+                var bookItem = await _service.GetBookByIdAsync(id);
+                if (bookItem == null)
                 {
                     return NotFound();
                 }
@@ -138,29 +151,33 @@ namespace BookApiBack.Controllers
         // POST: api/BookItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BookItem>> PostBookItem(BookItem bookItem)
+        public async Task<ActionResult<BookItem>> PostBookItem(BookItem postBookItem)
         {
             _logger.LogInformation("Post!!!");
 
+            BookItem bookItem = await _service.PostBookAsync(postBookItem);
+            return Ok(bookItem);
 
-            _context.bookitems.Add(bookItem);
-            await _context.SaveChangesAsync();
+            //_context.bookitems.Add(bookItem);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBookItemALL), new { id = bookItem.id }, bookItem);
+            //return CreatedAtAction(nameof(GetBookItemALL), new { id = bookItem.id }, bookItem);
         }
 
         // DELETE: api/BookItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookItem(long id)
         {
-            var bookItem = await _context.bookitems.FindAsync(id);
-            if (bookItem == null)
+            var targetBookItem = await _service.GetBookByIdAsync(id);
+            //var bookItem = await _context.bookitems.FindAsync(id);
+            if (targetBookItem == null)
             {
                 return NotFound();
             }
 
-            _context.bookitems.Remove(bookItem);
-            await _context.SaveChangesAsync();
+            BookItem bookItem = await _service.DelBookAsync(id);
+            //_context.bookitems.Remove(bookItem);
+            //await _context.SaveChangesAsync();
 
             return NoContent();
         }
