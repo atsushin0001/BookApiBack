@@ -17,7 +17,6 @@ namespace BookApiBack.Controllers
     {
         private readonly BookApiContext _context;
         private readonly ILogger<BookItemsController> _logger;
-        //private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IBookService _service;
 
