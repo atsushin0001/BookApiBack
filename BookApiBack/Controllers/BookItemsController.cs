@@ -92,26 +92,6 @@ namespace BookApiBack.Controllers
             //return bookItem;
         }
 
-        // GET: api/BookItems/publisheddate_start/publisheddate_end
-        //[HttpGet("{publisheddate_start}/{publisheddate_end}")]
-        //public async Task<ActionResult<IEnumerable<BookItem>>> GetBookItems(string publisheddate_start, string publisheddate_end)
-        //{
-        //    _logger.LogInformation("Get using date of span!!!");
-
-        //    string sql = "SELECT * FROM bookitems";
-        //    var people = connection.Query<Person>(sql)
-        //                   .OrderBy(p => p.Age);
-
-        //    var bookItems = await _context.bookitems.Where(b => b.title.Contains(keyword)).ToListAsync();
-
-        //    if (bookItems == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return bookItems;
-        //}
-
         // PUT: api/BookItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
